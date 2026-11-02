@@ -1,0 +1,15 @@
+[package]
+name = "joulity-social"
+version = "0.1.0"
+edition = "2021"
+description = "Joulity social savings on NEAR: group pockets and savings circles in USDC"
+license = "MIT"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+near-sdk = "5.5"
+
+[dev-dependencies]
+near-sdk = { version = "5.5", features = ["unit-testing"] }

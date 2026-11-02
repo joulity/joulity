@@ -1,0 +1,11 @@
+# Joulity NEAR services. Bound to localhost only; nginx serves the public domains.
+services:
+  api:
+    build: ./api
+    env_file: .env
+    ports: ["127.0.0.1:7510:8000"]
+    restart: unless-stopped
+  dashboard:
+    build: ./dashboard
+    ports: ["127.0.0.1:7520:3000"]
+    restart: unless-stopped

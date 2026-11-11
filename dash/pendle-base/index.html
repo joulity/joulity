@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Joulity Pendle Base</title>
+<link rel="stylesheet" href="./main.css?v=1794305086">
+<style>
+:root{--bg:#0B0F14;--card:#141A22;--line:#232C38;--tx:#E8EEF5;--sub:#8C99A8;--ac:#3DDC97;--warn:#F5B94A}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+a{color:var(--ac)}.w{max-width:720px;margin:0 auto;padding:20px 16px 60px}h1{font-size:22px;margin:0 0 4px}.sub{color:var(--sub);margin:0 0 18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin:12px 0}
+.row{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;padding:3px 0}
+button{background:var(--ac);color:#06110C;border:0;border-radius:10px;padding:10px 14px;font-weight:600;cursor:pointer;font-size:14px}
+button:disabled{opacity:.35;cursor:not-allowed}button.ghost{background:transparent;color:var(--tx);border:1px solid var(--line)}
+label{display:block;color:var(--sub);font-size:13px;margin:10px 0 4px}input,select{width:100%;background:#0E131A;border:1px solid var(--line);color:var(--tx);border-radius:8px;padding:9px 10px;font-size:14px}
+.st{font-size:12px;padding:3px 9px;border-radius:99px}.ok{background:#123A28;color:var(--ac)}.todo{background:#3A2E12;color:var(--warn)}
+.mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;word-break:break-all}
+#log{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;color:var(--sub);max-height:300px;overflow:auto}
+.n{color:var(--sub);font-size:13px}.steps{display:grid;gap:8px}.steps .row{border-top:1px solid var(--line);padding-top:8px}
+.flow{display:flex;gap:6px;flex-wrap:wrap;align-items:center;font-size:13px;color:var(--sub)}.flow b{color:var(--tx);background:#0E131A;border:1px solid var(--line);border-radius:8px;padding:3px 8px;font-weight:500}
+</style><style>.nav{display:flex;gap:8px;margin:0 0 14px}.nav a{flex:1;text-align:center;padding:8px;border:1px solid var(--line);border-radius:10px;text-decoration:none;color:var(--sub);font-size:13px}.nav a.on{background:#123A28;color:var(--ac);border-color:#123A28}</style></head><body><div class="w"><div class="nav"><a href="../pendle-base/" class="on">Pendle (Base)</a><a href="../lend/">Rhea lending (NEAR)</a><a href="../pendle/">Pendle (Ethereum)</a></div>
+<h1>Vault → Pendle on Base (automatic)</h1>
+<p class="sub">The vault's Base address is owned by a NEAR contract through Chain Signatures: no person holds its key. Money moves through NEAR Intents. You sign the setup once; after that the keeper runs it (vault → Base → buy PT → report). The way back stays yours.</p>
+<div class="flow"><b>Vault (NEAR)</b>→<b>joulity-pendle-base.near</b>→<b>NEAR Intents</b>→<b>Base address (MPC)</b>→<b>Pendle PT</b></div>
+
+<div class="card row"><div><div class="n">Admin wallet</div><div class="mono" id="who">…</div></div><button id="connect">Connect wallet</button></div>
+<p class="n">On your phone: open this page in the Meteor app (Explore) and pick <b>Meteor Wallet App</b>. Address: <span class="mono">app.joulity.com/dash/pendle-base/</span></p>
+
+<div class="card"><div class="row"><b>Holdings</b><button class="ghost" id="rf">Refresh</button></div>
+<div class="n" style="margin:6px 0">Base address of the strategy (Chain Signatures, path evm-8453): <span class="mono" id="addr">…</span></div>
+<div id="hold"></div><div class="n" id="kp" style="margin-top:6px"></div><div class="n mono" id="bridge"></div></div>
+
+<div class="card"><b>Setup (once)</b>
+<div class="steps">
+<div class="row"><div>1. Create <span class="mono">joulity-pendle-base.near</span> + code (no key left on it)<br><span class="n">Fund (NEAR, code storage ≈ 1.8)</span> <input id="fund" value="1.9" style="width:80px"></div><div><span id="s1" class="st todo">…</span> <button id="b1">Create account</button></div></div>
+<div class="row"><div style="flex:1;min-width:240px">2. Ethereum address + allowed Pendle market<select id="mkt"><option>loading markets…</option></select></div><div><span id="s2" class="st todo">…</span> <button class="own" data-a="setup">Allow</button></div></div>
+<div class="row"><div>3. Register the strategy on USDC</div><div><span id="s3" class="st todo">…</span> <button id="b3" data-a="usdcReg">Register</button></div></div>
+<div class="row"><div>4. Add the strategy to the vault · cap % <input id="cap" value="30" style="width:70px"></div><div><span id="s4" class="st todo">…</span> <button id="b4" data-a="strategy">Add</button></div></div>
+<div class="row"><div>5. Keeper runs it (<span class="mono">joulity-keeper.near</span>: bridge in, buy PT, report; it cannot send money anywhere else)</div><div><span id="s5" class="st todo">…</span> <button class="own" data-a="keeper">Give</button></div></div>
+</div></div>
+
+<div class="card"><b>Put money to work (by hand, the keeper does the same)</b>
+<div class="steps">
+<div class="row"><div>A. Vault → strategy (USDC) <input id="amt" value="5" style="width:90px"></div><button class="own" data-a="deploy">Send</button></div>
+<div class="row"><div>B. ETH for gas, paid with <b>your</b> NEAR, not the vault (NEAR) <input id="gasNear" value="0.1" style="width:70px"></div><button class="own" data-a="gas">Buy gas</button></div>
+<div class="row"><div>C. Bridge to Base via NEAR Intents (empty = all) <input id="outAmt" placeholder="all" style="width:90px"></div><button class="own" data-a="out">Bridge</button></div>
+<div class="row"><div>D. Approve USDC to the Pendle router (once)</div><button class="own" data-a="approveUsdc">Approve</button></div>
+<div class="row"><div>E. Buy PT (fixed rate until maturity)</div><button class="own" data-a="buy">Buy PT</button></div>
+<div class="row"><div>F. Report the value to the vault</div><button class="own" data-a="report">Report</button></div>
+</div></div>
+
+<div class="card"><b>Bring money home</b>
+<div class="steps">
+<div class="row"><div>1. Approve PT to the router (once)</div><button class="own" data-a="approvePt">Approve</button></div>
+<div class="row"><div>2. Sell PT → USDC (or redeem after maturity)</div><button class="own" data-a="sell">Sell</button></div>
+<div class="row"><div>3. Bridge USDC Base → NEAR via Intents</div><button class="own" data-a="back">Bridge back</button></div>
+<div class="row"><div>4. Strategy → vault (all USDC on NEAR)</div><button class="own" data-a="home">Return</button></div>
+</div></div>
+
+<div class="card" id="pend" style="display:none"><b>Finish a signature</b><p class="n">If the page closed before the Ethereum step, paste the NEAR transaction hash of <span class="mono">sign_eth</span>.</p>
+<input id="hash" placeholder="NEAR tx hash"><p></p><button class="own" data-a="fin">Finish and send to Ethereum</button></div>
+
+<div class="card"><b>Log</b><div id="log"></div></div>
+<p class="n">Policy enforced by the contract: approvals only to the Pendle router; Pendle calls must pay the strategy's own address and use an allowed market; the keeper may bridge in only to a NEAR Intents deposit address; USDC transfers on Base (the way back) only by the owner. <button class="ghost own" data-a="unkeeper">Stop the keeper</button></p>
+</div><script src="./main.js?v=1794305086"></script></body></html>

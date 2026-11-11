@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Joulity Admin Deploy</title>
+<link rel="stylesheet" href="./main.css">
+<style>
+:root{--bg:#0B0F14;--card:#141A22;--line:#232C38;--tx:#E8EEF5;--sub:#8C99A8;--ac:#3DDC97;--warn:#F5B94A}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+.w{max-width:720px;margin:0 auto;padding:20px 16px 60px}h1{font-size:22px;margin:0 0 4px}.sub{color:var(--sub);margin:0 0 18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin:12px 0}
+.row{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+button{background:var(--ac);color:#06110C;border:0;border-radius:10px;padding:10px 16px;font-weight:600;cursor:pointer;font-size:15px}
+button:disabled{opacity:.35;cursor:not-allowed}button.ghost{background:transparent;color:var(--tx);border:1px solid var(--line)}
+label{display:block;color:var(--sub);font-size:13px;margin:10px 0 4px}input{width:100%;background:#0E131A;border:1px solid var(--line);color:var(--tx);border-radius:8px;padding:9px 10px;font-size:14px}
+.g{display:grid;grid-template-columns:1fr 1fr;gap:0 12px}@media(max-width:520px){.g{grid-template-columns:1fr}}
+.st{font-size:13px;padding:3px 9px;border-radius:99px}.ok{background:#123A28;color:var(--ac)}.todo{background:#3A2E12;color:var(--warn)}
+code,.mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;word-break:break-all}
+#log{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;color:var(--sub);max-height:220px;overflow:auto}
+pre{white-space:pre-wrap;color:var(--sub);font-size:12px;margin:8px 0 0}.n{color:var(--sub);font-size:13px}
+</style></head><body><div class="w">
+<h1>Joulity on NEAR: deploy</h1>
+<p class="sub">You sign every step in your own wallet. No key is stored on this page or on the server.</p>
+
+<div class="card row"><div><div class="n">Admin wallet</div><div class="mono" id="who">…</div><div class="n" id="bal"></div></div>
+<button id="connect">Connect wallet</button></div>
+<p class="n">On your phone: open this page in the Meteor app (Explore) and pick <b>Meteor Wallet App</b>.</p>
+
+<div class="card"><b>Settings</b>
+<div class="g">
+<div><label>Vault manager (moves money to strategies)</label><input id="manager" placeholder="empty = admin wallet"></div>
+<div><label>Public key for the new accounts (optional, for upgrades)</label><input id="pk" placeholder="ed25519:…"></div>
+<div><label>Vault cap, total (USDC)</label><input id="capTotal" value="5000"></div>
+<div><label>Vault cap, per person (USDC)</label><input id="capAcct" value="200"></div>
+<div><label>NEAR for vault account (storage)</label><input id="fundVault" value="2.6"></div>
+<div><label>NEAR for social account (storage)</label><input id="fundSocial" value="2.7"></div>
+</div>
+<p class="n">No public key = the contracts are locked forever (nobody can change the code). Add your wallet's public key if you want to upgrade later.</p></div>
+
+<div class="card"><div class="row"><b>1. Vault (jUSD)</b><span id="s1" class="st todo">To do</span></div>
+<label>Vault account name (new)</label><input id="vaultId" value="joulity-vault.near"><div class="n" id="joulity_vault-info">loading code…</div>
+<p class="n">Two clicks: (1) your wallet asks NEAR to create the account with a one-time key made in this browser (a normal call, Meteor allows it); (2) this page puts the code and deletes that key in the same step. Your public key (if given) is added then.</p>
+<button id="b1" class="need">Deploy vault</button><pre id="infoOut"></pre></div>
+
+<div class="card"><div class="row"><b>2. Register the vault for USDC</b><span id="s2" class="st todo">To do</span></div>
+<p class="n">0.00125 NEAR. Lets the vault receive and send USDC.</p>
+<button id="b2" class="need">Register</button></div>
+
+<div class="card"><div class="row"><b>3. Pockets, goals, circles</b><span id="s3" class="st todo">To do</span></div>
+<label>Social account name (new)</label><input id="socialId" value="joulity-social.near"><div class="n" id="joulity_social-info">loading code…</div>
+<p class="n">Holds jUSD, so every pocket, goal and circle earns in the vault. Same two clicks.</p>
+<button id="b3" class="need">Deploy social</button></div>
+
+<div class="card"><div class="row"><b>4. Gas account (pays gas for users)</b><span id="s4" class="st todo">To do</span></div>
+<label>Gas account name (new)</label><input id="gasId" value="joulity-gas.near">
+<p class="n">A separate small account. The server made its own key; only its public key is shown below (already filled in). Your admin key never goes to the server.</p>
+<label>Server public key</label><input id="relayPk" value="ed25519:76284FCXpqNEfD7KDFxu2LxUEp3P6PRwDSUfRRjWZcJJ">
+<label>NEAR for gas</label><input id="fundRelay" value="2">
+<p></p><button id="b4" class="need">Create gas account</button></div>
+
+<div class="card"><div class="row"><b>Activity</b><button id="rf" class="ghost">Refresh</button></div><div id="log"></div></div>
+</div><script src="./main.js?v=1793962295"></script></body></html>

@@ -1,0 +1,16 @@
+[package]
+name = "joulity-vault"
+version = "0.1.0"
+edition = "2021"
+description = "Joulity vault on NEAR: USDC in, jUSD share token out; strategies with caps, cash floor and bounded reports"
+license = "MIT"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+near-sdk = "5.5"
+near-contract-standards = "5.5"
+
+[dev-dependencies]
+near-sdk = { version = "5.5", features = ["unit-testing"] }

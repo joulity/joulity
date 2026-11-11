@@ -1,0 +1,10 @@
+[Unit]
+Description=Joulity keeper (vault -> Rhea, automatic)
+After=network-online.target
+[Service]
+WorkingDirectory=/home/ubuntu/joulity/keeper
+ExecStart=/usr/bin/node /home/ubuntu/joulity/keeper/keeper.mjs
+Restart=on-failure
+RestartSec=30
+[Install]
+WantedBy=multi-user.target

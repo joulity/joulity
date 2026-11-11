@@ -12,3 +12,17 @@ __pycache__/
 keys/
 *.key
 *.pem
+
+# build outputs and local files
+contracts/target-mvp/
+dash/out/
+dash/opt/
+*.bak*
+relayer/state.json
+keeper/state.json
+# 3D characters and animations (Mixamo assets: not redistributed, served from the live site only)
+landing-assets/
+landing/assets/
+*.glb
+*.fbx
+dash/*/out/

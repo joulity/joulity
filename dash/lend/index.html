@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Joulity Rhea Strategy</title>
+<link rel="stylesheet" href="./main.css?v=1794227163">
+<style>
+:root{--bg:#0B0F14;--card:#141A22;--line:#232C38;--tx:#E8EEF5;--sub:#8C99A8;--ac:#3DDC97;--warn:#F5B94A}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+a{color:var(--ac)}.w{max-width:720px;margin:0 auto;padding:20px 16px 60px}h1{font-size:22px;margin:0 0 4px}.sub{color:var(--sub);margin:0 0 18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin:12px 0}
+.row{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;padding:3px 0}
+button{background:var(--ac);color:#06110C;border:0;border-radius:10px;padding:10px 14px;font-weight:600;cursor:pointer;font-size:14px}
+button:disabled{opacity:.35;cursor:not-allowed}button.ghost{background:transparent;color:var(--tx);border:1px solid var(--line)}
+label{display:block;color:var(--sub);font-size:13px;margin:10px 0 4px}input,select{width:100%;background:#0E131A;border:1px solid var(--line);color:var(--tx);border-radius:8px;padding:9px 10px;font-size:14px}
+.st{font-size:12px;padding:3px 9px;border-radius:99px}.ok{background:#123A28;color:var(--ac)}.todo{background:#3A2E12;color:var(--warn)}
+.mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;word-break:break-all}
+#log{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;color:var(--sub);max-height:300px;overflow:auto}
+.n{color:var(--sub);font-size:13px}.steps{display:grid;gap:8px}.steps .row{border-top:1px solid var(--line);padding-top:8px}
+.flow{display:flex;gap:6px;flex-wrap:wrap;align-items:center;font-size:13px;color:var(--sub)}.flow b{color:var(--tx);background:#0E131A;border:1px solid var(--line);border-radius:8px;padding:3px 8px;font-weight:500}
+</style><style>.nav{display:flex;gap:8px;margin:0 0 14px}.nav a{flex:1;text-align:center;padding:8px;border:1px solid var(--line);border-radius:10px;text-decoration:none;color:var(--sub);font-size:13px}.nav a.on{background:#123A28;color:var(--ac);border-color:#123A28}</style></head><body><div class="w"><div class="nav"><a href="../pendle/" id="nP">Pendle (Ethereum)</a><a href="../lend/" class="on">Rhea lending (NEAR)</a></div>
+<h1>Vault → Rhea lending</h1>
+<p class="sub">USDC stays on NEAR and is lent on Rhea (supplied only, never borrowed against: nothing can be liquidated). No bridge, no fee to go in or out. The strategy contract has no key. You sign each step in your wallet.</p>
+<div class="flow"><b>Vault (NEAR)</b>→<b>joulity-lend.near</b>→<b>Rhea (contract.main.burrow.near)</b></div>
+<div class="card row"><div><div class="n">Admin wallet</div><div class="mono" id="who">…</div></div><button id="connect">Connect wallet</button></div>
+<p class="n">On your phone: open this page in the Meteor app (Explore) and pick <b>Meteor Wallet App</b>. Address: <span class="mono">app.joulity.com/dash/lend/</span></p>
+<div class="card"><div class="row"><b>Holdings</b><button class="ghost" id="rf">Refresh</button></div><div id="hold"></div></div>
+<div class="card"><div class="row"><b>Keeper (automatic)</b><span id="kst" class="st todo">…</span></div>
+<p class="n" style="margin:6px 0">Every 10 minutes it checks the vault. Spare cash above the 20% floor goes to Rhea; if people take money out and the vault is short, it brings money back. It reports the value twice a day so jUSD shows the interest. It can only move money between the vault and Rhea.</p>
+<div id="kinfo"></div><div id="kact" class="mono" style="font-size:12px;color:var(--sub);max-height:220px;overflow:auto;margin-top:8px"></div>
+<p></p><div class="row"><span class="n">Stop the keeper:</span><span><button class="ghost own" data-a="stopLend">1. Remove from Rhea</button> <button class="ghost own" data-a="stopVault">2. Manager back to me</button></span></div></div>
+<div class="card"><b>Setup (once)</b><div class="steps">
+<div class="row"><div>1. Create <span class="mono">joulity-lend.near</span> + code (no key left on it)<br><span class="n">Fund (NEAR, code storage ≈ 1.7)</span> <input id="fund" value="1.8" style="width:80px"></div><div><span id="s1" class="st todo">…</span> <button id="b1">Create account</button></div></div>
+<div class="row"><div>2. Open the Rhea account (0.1 NEAR)</div><div><span id="s2" class="st todo">…</span> <button class="own" id="b2" data-a="register">Open</button></div></div>
+<div class="row"><div>2b. Register the strategy on USDC (0.00125 NEAR)</div><div><span id="s2b" class="st todo">…</span> <button id="b2b" data-a="usdcReg">Register</button></div></div>
+<div class="row"><div>3. Add the strategy to the vault · cap % <input id="cap" value="60" style="width:70px"></div><div><span id="s3" class="st todo">…</span> <button id="b3" data-a="strategy">Add</button></div></div>
+<div class="row"><div>4. Create the keeper <span class="mono">joulity-keeper.near</span> (its key was made on our server and never leaves it)<br><span class="n">Gas money (NEAR)</span> <input id="kfund" value="0.3" style="width:80px"></div><div><span id="s4" class="st todo">…</span> <button id="b4">Create keeper</button></div></div>
+<div class="row"><div>5. Keeper becomes vault manager</div><div><span id="s5" class="st todo">…</span> <button class="own" id="b5" data-a="rightVault">Give</button></div></div>
+<div class="row"><div>5b. Keeper becomes Rhea strategy keeper</div><div><span id="s5b" class="st todo">…</span> <button class="own" id="b5b" data-a="rightLend">Give</button></div></div>
+</div></div>
+<div class="card"><b>Put money to work (by hand, the keeper does the same)</b><div class="steps">
+<div class="row"><div>A. Vault → strategy (USDC) <input id="amt" value="5" style="width:90px"></div><button class="own" data-a="deploy">Send</button></div>
+<div class="row"><div>B. Lend it on Rhea</div><button class="own" data-a="supply">Supply</button></div>
+<div class="row"><div>C. Report the value to the vault (do it from time to time: the interest raises the jUSD price)</div><button class="own" data-a="report">Report</button></div>
+</div></div>
+<div class="card"><b>Bring money home</b><div class="steps">
+<div class="row"><div>1. Withdraw from Rhea (empty = all) <input id="wAmt" placeholder="all" style="width:90px"></div><button class="own" data-a="withdraw">Withdraw</button></div>
+<div class="row"><div>2. Strategy → vault (all USDC held)</div><button class="own" data-a="home">Return</button></div>
+</div></div>
+<div class="card"><b>Log</b><div id="log"></div></div>
+</div><script src="./main.js?v=1794227163"></script></body></html>

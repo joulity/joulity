@@ -1,0 +1,26 @@
+{
+  "name": "dash",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@near-wallet-selector/core": "^8.10.2",
+    "@near-wallet-selector/here-wallet": "^8.10.2",
+    "@near-wallet-selector/meteor-wallet": "^8.10.2",
+    "@near-wallet-selector/meteor-wallet-app": "^8.10.2",
+    "@near-wallet-selector/modal-ui": "^8.10.2",
+    "@near-wallet-selector/my-near-wallet": "^8.10.2",
+    "@near-wallet-selector/near-mobile-wallet": "^8.10.2",
+    "binaryen": "^116.0.0",
+    "buffer": "^6.0.3",
+    "esbuild": "^0.28.2",
+    "process": "^0.11.10",
+    "util": "^0.12.5"
+  }
+}

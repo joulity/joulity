@@ -1,0 +1,405 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Joulity · Save together</title>
+<meta name="description" content="Joulity is the on-chain neobank for saving together: personal and group pockets, money in from any chain, earning automatically, every move on NEAR.">
+<meta property="og:title" content="Joulity · Save together">
+<meta property="og:description" content="Personal and group pockets. Money in from any chain. It earns automatically. Every move on NEAR.">
+<meta name="theme-color" content="#F4F5F7">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%23111113'/%3E%3Ctext x='32' y='45' font-family='Arial' font-weight='900' font-size='36' text-anchor='middle' fill='%23ffffff'%3EJ%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F4F5F7;--card:#FFFFFF;--ink:#0F172A;--sub:#5B6270;--mute:#9AA1AB;--line:#E6E9EF;--mint:#00A67E;--mint2:#E3F6EF;--blue:#2F6FE4;--blue2:#E6EDFB;--amber:#B7741A;--amber2:#FBF1E0;--violet:#6C5BD2}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font:16px/1.55 Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:1140px;margin:0 auto;padding:0 20px}
+.g{background:linear-gradient(100deg,#00A67E,#2F6FE4);-webkit-background-clip:text;background-clip:text;color:transparent}
+
+/* nav (both views) */
+nav{position:fixed;top:12px;left:12px;right:12px;z-index:30;max-width:1140px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;border-radius:18px;background:rgba(255,255,255,.78);-webkit-backdrop-filter:blur(14px) saturate(1.4);backdrop-filter:blur(14px) saturate(1.4);border:1px solid rgba(255,255,255,.95);box-shadow:0 8px 30px rgba(15,23,42,.08)}
+.logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:18px;letter-spacing:-.3px}
+.mark{width:34px;height:34px;border-radius:10px;background:#111113;color:#fff;display:grid;place-items:center;font-weight:900}
+.navr{display:flex;align-items:center;gap:8px}
+.seg{display:inline-flex;background:#EEF1F5;border-radius:12px;padding:4px}
+.seg button{border:0;background:transparent;color:var(--sub);font:600 14px/1 Inter,system-ui;padding:9px 14px;border-radius:9px;cursor:pointer}
+.seg button.on{background:#fff;color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.btn{display:inline-flex;align-items:center;gap:8px;height:46px;padding:0 20px;border-radius:13px;font-weight:650;font-size:15px;transition:transform .15s}
+.btn:hover{transform:translateY(-1px)}
+.btn.p{background:#111113;color:#fff}
+.btn.s{background:#fff;color:var(--ink);border:1px solid var(--line)}
+.btn.sm{height:40px;padding:0 14px;font-size:14px;border-radius:11px}
+@media (max-width:640px){nav .hide-s{display:none}.seg button{padding:8px 11px}}
+
+/* ---------- simple view ---------- */
+#simple{padding-top:90px}
+.hero{padding:70px 0 60px;text-align:center}
+.pill{display:inline-flex;align-items:center;gap:8px;padding:7px 14px;border-radius:999px;background:var(--mint2);color:var(--mint);font-size:13px;font-weight:700}
+.pill i{width:7px;height:7px;border-radius:50%;background:var(--mint);box-shadow:0 0 0 4px rgba(0,166,126,.15)}
+h1{font-size:clamp(40px,7vw,80px);line-height:1.02;letter-spacing:-.045em;font-weight:800;margin:20px auto 18px;max-width:900px}
+.lead{font-size:clamp(17px,1.8vw,21px);color:var(--sub);max-width:660px;margin:0 auto}
+.cta{display:flex;gap:10px;justify-content:center;margin-top:30px;flex-wrap:wrap}
+.trust{display:flex;gap:10px 22px;justify-content:center;margin-top:28px;color:var(--sub);font-size:14px;flex-wrap:wrap}
+.trust span:before{content:"✓";color:var(--mint);font-weight:800;margin-right:7px}
+.live{margin:44px auto 0;max-width:860px;display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;text-align:left}
+.kpi small{color:var(--sub);font-size:12.5px;font-weight:600}
+.kpi b{display:block;font-size:24px;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.kpi span{color:var(--mute);font-size:12px}
+.livenote{color:var(--mute);font-size:12.5px;margin-top:10px}
+section{padding:90px 0}
+.k{color:var(--mint);font-weight:700;font-size:13px;letter-spacing:.1em;text-transform:uppercase}
+h2{font-size:clamp(30px,4.4vw,52px);line-height:1.06;letter-spacing:-.035em;font-weight:800;margin:12px 0 14px;max-width:780px}
+.sl{color:var(--sub);font-size:18px;max-width:640px}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:44px}
+.st{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:22px}
+.st .n{width:34px;height:34px;border-radius:10px;background:#111113;color:#fff;display:grid;place-items:center;font-weight:800;margin-bottom:16px}
+.st b{display:block;font-size:18px;letter-spacing:-.01em;margin-bottom:6px}
+.st p{color:var(--sub);font-size:15px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:44px}
+.rule{background:var(--card);border:1px solid var(--line);border-radius:24px;padding:28px;position:relative;overflow:hidden}
+.rule:before{content:"";position:absolute;inset:0 0 auto 0;height:5px;background:var(--c)}
+.rule h3{font-size:24px;letter-spacing:-.02em;margin:6px 0 6px}
+.rule .tag{font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--c)}
+.rule p{color:var(--sub)}
+.rule ul{list-style:none;margin-top:16px;display:grid;gap:9px}
+.rule li{display:flex;gap:10px;font-size:15px}
+.rule li:before{content:"";flex:none;width:8px;height:8px;border-radius:50%;background:var(--c);margin-top:8px}
+.chains{display:flex;flex-wrap:wrap;gap:10px;margin-top:30px}
+.chain{display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:8px 14px 8px 8px;font-weight:600;font-size:14px}
+.chain img{width:24px;height:24px;border-radius:50%}
+.chain i{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;font-style:normal;font-size:11px;color:#fff;font-weight:800}
+.flow{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:40px;align-items:start}
+.card{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:22px}
+.row{display:flex;align-items:center;gap:12px;padding:12px 0;border-top:1px solid var(--line)}
+.row:first-of-type{border-top:0}
+.row img{width:30px;height:30px;border-radius:50%}
+.row b{display:block}
+.row small{color:var(--sub)}
+.row .r{margin-left:auto;text-align:right;font-weight:700;font-variant-numeric:tabular-nums}
+.row .r small{display:block;font-weight:500}
+.sec{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:40px}
+.sec div{border-top:2px solid #111113;padding-top:16px}
+.sec b{display:block;font-size:17px;margin-bottom:6px}
+.sec span{color:var(--sub);font-size:15px}
+.soonrow{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:40px}
+.soon{background:var(--card);border:1px dashed #cfd5de;border-radius:22px;padding:24px}
+.soon .t{display:inline-block;font-size:11.5px;font-weight:800;letter-spacing:.06em;padding:4px 9px;border-radius:8px;margin-bottom:12px}
+.soon h3{font-size:20px;letter-spacing:-.02em;margin-bottom:6px}
+.soon p{color:var(--sub)}
+.final{margin:20px 20px 70px;border-radius:32px;padding:80px 20px;text-align:center;background:#111113;color:#fff}
+.final h2{margin:0 auto 12px;color:#fff}
+.final p{color:#AEB4C0;font-size:18px}
+.final .btn.p{background:#fff;color:#111113}
+.final .btn.s{background:transparent;color:#fff;border-color:rgba(255,255,255,.25)}
+footer{border-top:1px solid var(--line);padding:30px 0 46px;color:var(--mute);font-size:14px}
+footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+footer .fl{display:flex;gap:20px}
+.rv{opacity:0;transform:translateY(22px);transition:opacity .7s ease,transform .7s ease}
+.rv.in{opacity:1;transform:none}
+@media (max-width:900px){.steps,.sec{grid-template-columns:1fr 1fr}.two,.flow,.soonrow{grid-template-columns:1fr}.live{grid-template-columns:1fr 1fr}}
+@media (max-width:560px){.steps,.sec{grid-template-columns:1fr}section{padding:64px 0}.hero{padding:40px 0 40px}.final{margin:10px 10px 50px;padding:56px 18px}}
+@media (prefers-reduced-motion:reduce){.rv{opacity:1;transform:none;transition:none}html{scroll-behavior:auto}}
+
+/* ---------- 3D view ---------- */
+#three{display:none}
+body.three{background:#e7ebf0}
+body.three #simple{display:none}
+body.three #three{display:block}
+#scene{position:fixed;inset:0;z-index:0;background:#e7ebf0}
+#scene canvas{display:block;width:100%;height:100%}
+.chap{position:relative;z-index:2;min-height:100vh;display:flex;align-items:center;padding:100px 20px 60px;pointer-events:none}
+.chap .glass{pointer-events:auto;max-width:440px;background:rgba(255,255,255,.82);-webkit-backdrop-filter:blur(16px) saturate(1.4);backdrop-filter:blur(16px) saturate(1.4);border:1px solid rgba(255,255,255,.95);border-radius:22px;padding:24px;box-shadow:0 18px 50px rgba(15,23,42,.12);opacity:0;transform:translateY(30px);transition:opacity .6s ease,transform .6s ease}
+.chap.on .glass{opacity:1;transform:none}
+.chap.right{justify-content:flex-end}
+.chap .glass h2{font-size:clamp(28px,3.6vw,44px);margin:8px 0 10px}
+.chap .glass p{color:var(--sub);font-size:16.5px}
+.chap .glass .mini{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:16px}
+.chap .glass .mini div{background:#F4F6F9;border-radius:12px;padding:10px}
+.chap .glass .mini small{color:var(--sub);font-size:12px;font-weight:600}
+.chap .glass .mini b{display:block;font-size:18px;font-variant-numeric:tabular-nums}
+.chap .glass ul{list-style:none;margin-top:12px;display:grid;gap:7px}
+.chap .glass li{display:flex;gap:9px;font-size:15px}
+.chap .glass li:before{content:"✓";color:var(--mint);font-weight:800}
+.dots{position:fixed;right:14px;top:50%;transform:translateY(-50%);z-index:3;display:none;flex-direction:column;gap:10px}
+body.three .dots{display:flex}
+.dots a{width:10px;height:10px;border-radius:50%;background:rgba(15,23,42,.2)}
+.dots a.on{background:#111113;transform:scale(1.3)}
+.hint3{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);z-index:3;display:none;font-size:13px;color:#4b5563;background:rgba(255,255,255,.8);padding:6px 12px;border-radius:999px}
+body.three .hint3{display:block}
+.lbls{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.lbl{position:absolute;left:0;top:0;background:rgba(255,255,255,.92);border:1px solid #e5e7eb;box-shadow:0 2px 10px rgba(17,24,39,.08);border-radius:8px;padding:4px 9px;text-align:center;white-space:nowrap;font:600 11px/1.25 Inter,system-ui,sans-serif;color:#111113;transform-origin:0 0}
+.lbl b{display:block;font-size:12px}.lbl span{color:#5b6270}
+.lbl.small{background:#fff;color:#00A67E;border:1px solid #a7f3d0}
+.lbl.isl{background:var(--c);color:#fff;border:0}.lbl.isl span{display:none}
+@media (max-width:640px){.chap{align-items:flex-end;padding:90px 12px 70px}.chap.right{justify-content:center}.chap .glass{padding:18px}}
+
+/* ---------- film (3D) ---------- */
+body.three{overflow:hidden;background:#efe8de}
+#film{position:fixed;inset:0;z-index:1;background:#efe8de}
+#film canvas{display:block;width:100%;height:100%}
+#film .loading{position:absolute;inset:0;display:grid;place-items:center;color:#5b6270;font-weight:600;z-index:3}
+.fcap{position:absolute;left:24px;top:96px;z-index:4;max-width:min(520px,calc(100vw - 48px));background:#fffdf7;border:2px solid #111113;border-radius:6px;padding:12px 16px;font:800 clamp(18px,2.2vw,26px)/1.25 Inter,system-ui,sans-serif;letter-spacing:-.01em;box-shadow:6px 6px 0 rgba(17,17,19,.9);opacity:0;transform:translateY(-10px) rotate(-.6deg);transition:opacity .45s ease,transform .45s ease}
+.fcap.on{opacity:1;transform:none}
+.flayer{position:absolute;inset:0;z-index:5;pointer-events:none;overflow:hidden}
+.bub{position:absolute;left:0;top:0;max-width:260px;background:#fff;border:2px solid #111113;border-radius:18px;padding:9px 13px;font:600 15px/1.3 Inter,system-ui,sans-serif;color:#111113;box-shadow:3px 3px 0 rgba(17,17,19,.85);opacity:0;scale:.6;transition:opacity .3s ease,scale .35s cubic-bezier(.3,1.6,.5,1)}
+.bub.on{opacity:1;scale:1}
+.bub b{display:block;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#00A67E;margin-bottom:2px}
+.bub.say:after{content:"";position:absolute;left:22%;bottom:-12px;border:10px solid transparent;border-top-color:#111113;border-bottom:0}
+.bub.say:before{content:"";position:absolute;left:calc(22% + 2px);bottom:-8px;border:8px solid transparent;border-top-color:#fff;border-bottom:0;z-index:1}
+.bub.think{border-radius:999px;padding:12px 18px;font-style:italic}
+.bub.think:after{content:"";position:absolute;left:24%;bottom:-16px;width:12px;height:12px;border:2px solid #111113;border-radius:50%;background:#fff}
+.bub.think:before{content:"";position:absolute;left:18%;bottom:-28px;width:7px;height:7px;border:2px solid #111113;border-radius:50%;background:#fff}
+.fcards{position:absolute;right:24px;top:96px;z-index:4;width:min(340px,calc(100vw - 48px));display:grid;gap:12px}
+.fcard{background:rgba(255,255,255,.94);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border:1px solid #fff;border-radius:18px;padding:16px;box-shadow:0 18px 50px rgba(60,40,20,.16);opacity:0;transform:translateY(16px) scale(.97);transition:opacity .5s ease,transform .5s cubic-bezier(.2,1.2,.4,1)}
+.fcard.on{opacity:1;transform:none}
+.fcard .t{font-size:11.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#00A67E}
+.fcard h4{font-size:19px;letter-spacing:-.02em;margin:4px 0 8px}
+.fcard .r{display:flex;justify-content:space-between;font-size:14px;padding:6px 0;border-top:1px solid #eef0f3}
+.fcard .r:first-of-type{border-top:0}
+.fcard .bar{height:12px;border-radius:99px;background:#eef1f5;overflow:hidden;margin:10px 0 6px}
+.fcard .bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#00A67E,#2F6FE4);transition:width 2.2s cubic-bezier(.3,.8,.3,1)}
+.fcard .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+.fcard .chips span{display:flex;align-items:center;gap:6px;background:#f4f6f9;border-radius:99px;padding:5px 10px 5px 5px;font-size:13px;font-weight:600}
+.fcard .chips img{width:20px;height:20px;border-radius:50%}
+.fcard .ok{color:#00A67E;font-weight:700}
+.fcard .big{font-size:30px;font-weight:800;letter-spacing:-.03em}
+.fcard.cta{text-align:left}
+.fctl{position:absolute;left:50%;bottom:22px;transform:translateX(-50%);z-index:6;display:flex;align-items:center;gap:12px;background:rgba(255,255,255,.88);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border:1px solid #fff;border-radius:999px;padding:6px;box-shadow:0 10px 30px rgba(60,40,20,.14)}
+.fctl button{border:0;height:42px;min-width:42px;border-radius:999px;background:transparent;font:700 16px/1 Inter,system-ui;color:#111113;cursor:pointer;padding:0 14px}
+.fctl button.next{background:#111113;color:#fff}
+.fctl button:disabled{opacity:.3}
+.fdots{display:flex;gap:7px}
+.fdots i{width:8px;height:8px;border-radius:50%;background:#d6d0c6;cursor:pointer}
+.fdots i.on{background:#111113;transform:scale(1.25)}
+@media (max-width:760px){.fcap{top:84px;left:12px;font-size:18px}.fcards{right:12px;left:12px;width:auto;top:auto;bottom:86px}.fcard{padding:12px}.fcard h4{font-size:16px}.bub{max-width:200px;font-size:13.5px}}
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="logo" href="#top"><span class="mark">J</span>Joulity</a>
+  <div class="navr">
+    <div class="seg" role="tablist" aria-label="View"><button id="vS" class="on">Simple</button><button id="v3">3D</button></div>
+    <a class="btn s sm hide-s" href="/vault/">Live vault</a>
+    <a class="btn p sm" href="/bank/">Open app</a>
+  </div>
+</nav>
+
+<!-- ================= SIMPLE ================= -->
+<div id="simple">
+<header class="hero wrap" id="top">
+  <span class="pill"><i></i>Live on NEAR mainnet</span>
+  <h1>Save together.<br><span class="g">Reach it together.</span></h1>
+  <p class="lead">Joulity is the on-chain neobank for saving together. Open a personal pocket or a group pocket with family and friends, add money from any chain, and let it earn automatically.</p>
+  <div class="cta"><a class="btn p" href="/bank/">Open the app →</a><a class="btn s" href="/vault/">See the live vault</a></div>
+  <div class="trust"><span>Sign in with email</span><span>No gas fees</span><span>Money in from any chain</span><span>Every move on NEAR</span></div>
+  <div class="live" id="live">
+    <div class="kpi"><small>In the vault now</small><b id="k1">…</b><span>real money</span></div>
+    <div class="kpi"><small>jUSD price</small><b id="k2">…</b><span>starts at $1</span></div>
+    <div class="kpi"><small>Yield on invested money</small><b id="k3">…</b><span>Rhea + Pendle</span></div>
+    <div class="kpi"><small>Paper strategies</small><b id="k4">…</b><span>since Nov 1</span></div>
+  </div>
+  <p class="livenote">Read live from NEAR mainnet (joulity-vault.near) when this page loaded.</p>
+</header>
+
+<section id="how" style="padding-top:40px">
+  <div class="wrap">
+    <div class="rv"><div class="k">How it works</div><h2>Four steps. <span class="g">No crypto skills.</span></h2></div>
+    <div class="steps">
+      <div class="st rv"><div class="n">1</div><b>Create a pocket</b><p>For you, or for a group: a trip, a wedding gift, a family project, an association.</p></div>
+      <div class="st rv"><div class="n">2</div><b>Invite your group</b><p>Share a link. Friends read the rules, accept them and join. No money needed to join.</p></div>
+      <div class="st rv"><div class="n">3</div><b>Add money from any chain</b><p>USDC or crypto from Ethereum, Base, Solana, Arbitrum and more. NEAR Intents turns it into dollars.</p></div>
+      <div class="st rv"><div class="n">4</div><b>It earns automatically</b><p>Waiting money goes to the Joulity vault and earns, until your group reaches its goal.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="rules" style="background:#fff;border-top:1px solid var(--line);border-bottom:1px solid var(--line)">
+  <div class="wrap">
+    <div class="rv"><div class="k">Collective savings</div><h2>Your group picks the rules. <span class="g">The contract keeps them.</span></h2><p class="sl">Chosen once, when the group is created. Everyone who joins reads them and accepts them.</p></div>
+    <div class="two">
+      <div class="rule rv" style="--c:#00A67E"><span class="tag">Free pocket</span><h3>Your share is always yours</h3><p>Everyone can take back what they put in, at any time.</p>
+        <ul><li>Nobody can touch your share, not even the creator</li><li>Great for a shared trip fund or a family pot</li><li>The money earns while it waits</li></ul></div>
+      <div class="rule rv" style="--c:#2F6FE4"><span class="tag">Locked goal</span><h3>Nobody quits halfway</h3><p>The money stays until the goal. The group decides together.</p>
+        <ul><li>Pay out to the organiser: 75% yes</li><li>Leave early or refund everyone: more than 50% yes</li><li>Votes are weighted by money put in, 1 USDC = 1 vote</li><li>Nothing paid out 30 days after the date? Everyone takes their part back</li></ul></div>
+    </div>
+  </div>
+</section>
+
+<section id="chains">
+  <div class="wrap">
+    <div class="rv"><div class="k">Money in from anywhere</div><h2>Any chain in. <span class="g">Dollars out.</span></h2><p class="sl">Friends don't need the same wallet or the same chain. NEAR Intents moves the money and turns it into USDC on NEAR, gas paid by Joulity.</p></div>
+    <div class="chains rv">
+      <span class="chain"><img src="/vault/logos/ethereum.png" alt="">Ethereum</span>
+      <span class="chain"><img src="/vault/logos/base.png" alt="">Base</span>
+      <span class="chain"><i style="background:#9945FF">S</i>Solana</span>
+      <span class="chain"><i style="background:#28A0F0">A</i>Arbitrum</span>
+      <span class="chain"><img src="/vault/logos/near.jpg" alt="">NEAR</span>
+      <span class="chain"><img src="/vault/logos/usdc.png" alt="">USDC</span>
+      <span class="chain"><i style="background:#94A3B8">+</i>and more via NEAR Intents</span>
+    </div>
+  </div>
+</section>
+
+<section id="earn" style="background:#fff;border-top:1px solid var(--line);border-bottom:1px solid var(--line)">
+  <div class="wrap">
+    <div class="rv"><div class="k">How the money earns</div><h2>One vault. <span class="g">Every position visible.</span></h2><p class="sl">Savings sit in one dollar vault on NEAR. It keeps 20% as cash for withdrawals and spreads the rest over strategies, each with a cap. A keeper runs it and every move is a public transaction.</p></div>
+    <div class="flow">
+      <div class="card rv"><b style="font-size:18px">Real money, live</b>
+        <div class="row"><img src="/vault/logos/usdc.png" alt=""><div><b>Cash</b><small>20% floor for withdrawals</small></div><div class="r" id="rc">…</div></div>
+        <div class="row"><img src="/vault/logos/rhea.png" alt=""><div><b>Rhea lending</b><small>NEAR</small></div><div class="r" id="rr">…</div></div>
+        <div class="row"><img src="/vault/logos/pendle.png" alt=""><div><b>Pendle fixed rate</b><small>Ethereum, via NEAR Intents + Chain Signatures</small></div><div class="r" id="rp">…</div></div>
+      </div>
+      <div class="card rv"><b style="font-size:18px">Tested on paper, live market data</b>
+        <div class="row"><img src="/vault/logos/hyperliquid.jpg" alt=""><div><b>Funding spread</b><small>Hyperliquid vs exchanges</small></div><div class="r" id="pa">…</div></div>
+        <div class="row"><img src="/vault/logos/curve.png" alt=""><div><b>Curve stable pools</b><small>Ethereum</small></div><div class="r" id="pb">…</div></div>
+        <div class="row"><img src="/vault/logos/pendle.png" alt=""><div><b>Pendle PT rotation</b><small>Ethereum</small></div><div class="r" id="pg">…</div></div>
+        <div class="row"><img src="/vault/logos/base.png" alt=""><div><b>Base lending</b><small>Base</small></div><div class="r" id="pl">…</div></div>
+      </div>
+    </div>
+    <div class="cta" style="justify-content:flex-start"><a class="btn s" href="/vault/">Open the live vault dashboard</a><a class="btn s" href="/vault/?view=3d">See it in 3D</a></div>
+    <p class="livenote" style="margin-top:14px">Returns are never guaranteed. Paper strategies use pretend money with real market data and real costs.</p>
+  </div>
+</section>
+
+<section id="secure">
+  <div class="wrap">
+    <div class="rv"><div class="k">Secure for every member</div><h2>Simple to use. <span class="g">Safe by design.</span></h2></div>
+    <div class="sec">
+      <div class="rv"><b>Your own account</b><span>A real NEAR account in your name, opened with your email. No seed phrase to lose.</span></div>
+      <div class="rv"><b>Rules in contracts</b><span>Pockets and goals are kept by NEAR smart contracts, not by our servers or by any member.</span></div>
+      <div class="rv"><b>Hard limits</b><span>20% cash floor, a cap per strategy, a cap per person. The keeper can only move money between the vault's own addresses.</span></div>
+      <div class="rv"><b>Everything public</b><span>Every deposit, move and report is an on-chain transaction, linked from the dashboard. Contracts are not audited yet.</span></div>
+    </div>
+  </div>
+</section>
+
+<section style="padding-top:0">
+  <div class="wrap">
+    <div class="soonrow">
+      <div class="soon rv"><span class="t" style="background:var(--amber2);color:var(--amber)">OPTION</span><h3>Reinvest your group's earnings</h3><p>Your group can choose to turn its earnings into a mix of dollars, gold and Bitcoin.</p></div>
+      <div class="soon rv"><span class="t" style="background:var(--blue2);color:var(--blue)">COMING SOON</span><h3>Card and IBAN</h3><p>A payment card and a personal IBAN, so your group pot works like a normal bank account.</p></div>
+    </div>
+  </div>
+</section>
+
+<div class="final rv">
+  <h2>Start saving <span class="g" style="background:linear-gradient(100deg,#5EEAD4,#93C5FD);-webkit-background-clip:text;background-clip:text">together.</span></h2>
+  <p>Create a pocket, invite your group, reach it together.</p>
+  <div class="cta"><a class="btn p" href="/bank/">Open the app</a><a class="btn s" href="/vault/">See the live vault</a></div>
+</div>
+
+<footer><div class="wrap"><span>© 2026 Joulity · Built on NEAR</span><div class="fl"><a href="/bank/">App</a><a href="/vault/">Vault</a><a href="https://github.com/joulity/joulity">GitHub</a></div></div></footer>
+</div>
+
+<!-- ================= 3D: the film ================= -->
+<div id="three">
+  <div id="film">
+    <div class="loading" id="fLoad">Loading the story…</div>
+    <div class="fcap" id="fCap"></div>
+    <div class="fcards" id="fCards"></div>
+    <div class="flayer" id="fLayer"></div>
+    <div class="fctl">
+      <button id="fPrev" aria-label="Previous scene">‹</button>
+      <div class="fdots" id="fDots"></div>
+      <button id="fNext" class="next" aria-label="Next scene">Next ›</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ---------- shared live data (read straight from NEAR mainnet) ----------
+const RPC = "https://rpc.mainnet.fastnear.com", VAULT = "joulity-vault.near", USDC = "17208628f84f5d6ad33f0da3bbbeb27ffcb398eac501a31bd6ad2011e36133a1";
+const $ = (id) => document.getElementById(id);
+const usd = (v, d = 2) => "$" + Number(v).toLocaleString(undefined, { minimumFractionDigits: d, maximumFractionDigits: d });
+const pct = (v) => (v == null || !isFinite(v) ? "—" : (v * 100).toFixed(1) + "%");
+async function view(id, m, a = {}) { try { const j = await (await fetch(RPC, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ jsonrpc: "2.0", id: 1, method: "query", params: { request_type: "call_function", finality: "final", account_id: id, method_name: m, args_base64: btoa(JSON.stringify(a)) } }) })).json(); return JSON.parse(new TextDecoder().decode(new Uint8Array(j.result.result))); } catch { return null; } }
+const getJ = (u) => fetch(u + (u.includes("?") ? "&" : "?") + "t=" + Date.now()).then((r) => r.json()).catch(() => null);
+let L = null;
+async function load() {
+  const [info, strats, asset, hist, k, bots] = await Promise.all([view(VAULT, "info"), view(VAULT, "strategies"), view("contract.main.burrow.near", "get_asset", { token_id: USDC }), getJ("/dash/keeper/history.json"), getJ("/dash/keeper/status.json"), getJ("/papi/v1/bots")]);
+  const S = Object.fromEntries((strats || []).map(([n, v]) => [n, v]));
+  const pts = hist?.points || [], last = pts[pts.length - 1] || {};
+  const rhea = asset ? Number(asset.supply_apr) : last.rheaApr, pendle = last.pendleApy;
+  const u6 = (x) => Number(x || 0) / 1e6;
+  L = { info, S, rhea, pendle, pts, k, bots: Array.isArray(bots) ? bots : [] };
+  if (!info) return;
+  const total = u6(info.total_assets), price = Number(info.price) / 1e6, cash = u6(info.cash), vr = u6(S.rhea?.value), vp = u6(S.pendle?.value);
+  const inv = vr + vp, invY = inv ? (vr * (rhea || 0) + vp * (pendle || 0)) / inv : 0;
+  const B = Object.fromEntries(L.bots.map((b) => [b.id, b]));
+  const pTot = L.bots.filter((b) => !["bot_b_blue", "bot_k", "bot_c"].includes(b.id)).reduce((a, b) => a + (b.nav?.equity ?? b.capital0), 0);
+  window.JD_LIVE = { apy: pct(invY), apyN: invY, vault: usd(total), total, cash, rhea: vr, pendle: vp, rheaR: pct(rhea) + " a year", pendleR: pct(pendle) + " fixed" };
+  $("k1").textContent = usd(total); $("k2").textContent = "$" + price.toFixed(4); $("k3").textContent = pct(invY); $("k4").textContent = pTot ? usd(pTot, 0) : "…";
+  $("rc").innerHTML = usd(cash) + "<small>0%</small>"; $("rr").innerHTML = usd(vr) + "<small>" + pct(rhea) + " a year</small>"; $("rp").innerHTML = usd(vp) + "<small>" + pct(pendle) + " fixed</small>";
+  const pb = (id, el) => { const b = B[id]; if (b) $(el).innerHTML = usd(b.nav?.equity ?? b.capital0, 0) + "<small>" + pct(b.apr) + " a year</small>"; };
+  pb("bot_a", "pa"); pb("bot_b", "pb"); pb("bot_g", "pg"); pb("bot_l", "pl");
+
+}
+load(); setInterval(load, 60000);
+
+// reveal on scroll (simple view)
+const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } }), { threshold: 0.12 });
+document.querySelectorAll(".rv").forEach((el) => io.observe(el));
+
+// ---------- 3D: the film, scene by scene ----------
+const lg = (f) => '<img src="/vault/logos/' + f + '" alt="">';
+window.FilmCards = (box, kind, o) => {
+  const d = document.createElement("div"); d.className = "fcard " + kind;
+  const i = L?.info, total = i ? Number(i.total_assets) / 1e6 : null;
+  const vr = Number(L?.S?.rhea?.value || 0) / 1e6, vp = Number(L?.S?.pendle?.value || 0) / 1e6, inv = vr + vp, y = inv ? (vr * (L.rhea || 0) + vp * (L.pendle || 0)) / inv : null;
+  const html = {
+    "app-new": '<div class="t">Joulity · new group</div><h4>Tokyo trip ✈️</h4><div class="r"><span>Goal</span><b>$3,000</b></div><div class="r"><span>Rules</span><b>Locked goal</b></div><div class="r"><span>Pay out</span><b>75% of votes</b></div><div class="r"><span>Leave early</span><b>more than 50%</b></div>',
+    "app-join": '<div class="t">Invite accepted</div><h4>Sami joined Tokyo trip</h4><div class="r"><span>Rules</span><b class="ok">✓ accepted</b></div><div class="r"><span>Money needed to join</span><b>none</b></div>',
+    chains: '<div class="t">From any chain</div><h4>Everyone pays from where they are</h4><div class="chips"><span>' + lg("ethereum.png") + 'Ethereum</span><span>' + lg("base.png") + 'Base</span><span><i style="width:20px;height:20px;border-radius:50%;background:#9945FF;display:inline-block"></i>Solana</span><span>' + lg("near.jpg") + 'NEAR</span></div><div class="r" style="margin-top:8px"><span>Turned into</span><b>' + lg("usdc.png").replace("<img", '<img style="width:16px;vertical-align:-3px"') + ' USDC on NEAR</b></div>',
+    progress: '<div class="t">Tokyo trip</div><div class="r"><span>Saved together</span><b class="amt">$0</b></div><div class="bar"><i></i></div><div class="r"><span>Goal</span><b>$3,000</b></div>',
+    earn: '<div class="t">While they wait</div><h4>The pocket earns</h4><div class="big">' + (y ? (y * 100).toFixed(1) + "%" : "~10%") + '<span style="font-size:14px;color:#5b6270;font-weight:600"> a year</span></div><div class="r"><span>Live Joulity vault</span><b>' + (total != null ? "$" + total.toFixed(2) : "…") + '</b></div><div class="r"><span>Strategies</span><b>Rhea · Pendle</b></div>',
+    goal: '<div class="t">Goal reached</div><h4>Tokyo, together 🎉</h4><div class="bar"><i style="width:100%"></i></div><div class="r"><span>Saved</span><b>$3,000</b></div><div class="r"><span>Paid out by</span><b>group vote</b></div>',
+    cta: '<div class="t">Joulity</div><h4 style="font-size:24px">Save together.<br>Reach it together.</h4><p style="color:#5b6270;font-size:14px;margin:6px 0 12px">The on-chain neobank for saving together. Money in from any chain, earning automatically, every move on NEAR.</p><div style="display:flex;gap:8px;flex-wrap:wrap"><a class="btn p sm" href="/bank/">Open the app</a><a class="btn s sm" href="/vault/">Live vault</a></div>',
+  }[kind];
+  if (!html) return;
+  if (kind === "progress") { const old = box.querySelector(".fcard.progress"); if (old) old.remove(); }
+  d.innerHTML = html; box.appendChild(d); while (box.children.length > 2) box.firstChild.remove();
+  requestAnimationFrame(() => { d.classList.add("on"); if (kind === "progress") { const bar = d.querySelector(".bar i"), amt = d.querySelector(".amt"), f = o.from || 0, t = o.to || 1; bar.style.width = f * 100 + "%"; requestAnimationFrame(() => (bar.style.width = t * 100 + "%")); const t0 = performance.now(); const tick = (n) => { const k = Math.min(1, (n - t0) / 2200), v = f + (t - f) * (1 - Math.pow(1 - k, 3)); amt.textContent = "$" + Math.round(3000 * v).toLocaleString(); if (k < 1) requestAnimationFrame(tick); }; requestAnimationFrame(tick); } });
+};
+let filmStarted = null;
+function loadScript(src) { return new Promise((ok, no) => { const x = document.createElement("script"); x.src = src; x.onload = ok; x.onerror = no; document.head.appendChild(x); }); }
+async function start3d() {
+  filmStarted ??= (async () => {
+    if (!window.THREE) await loadScript("https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js");
+    await loadScript("film3d.js?v=" + Date.now());
+    await window.Film.init($("film"), { caption: $("fCap"), cards: $("fCards"), layer: $("fLayer"), loading: $("fLoad") }, (i, n) => {
+      [...$("fDots").children].forEach((d, k) => d.classList.toggle("on", k === i));
+      if (!$("fDots").children.length) for (let k = 0; k < n; k++) { const d = document.createElement("i"); d.onclick = () => window.Film.go(k); $("fDots").appendChild(d); }
+      $("fPrev").disabled = i === 0; $("fNext").textContent = i === n - 1 ? "Replay ↺" : "Next ›";
+    });
+  })();
+  try { await filmStarted; } catch (e) { $("fLoad").textContent = "3D could not start on this device. The Simple view has everything."; }
+  window.Film?.resume();
+}
+$("fNext").onclick = () => (window.Film?.index() === window.Film?.count() - 1 ? window.Film.go(0) : window.Film?.next());
+$("fPrev").onclick = () => window.Film?.prev();
+let wheelAt = 0;
+addEventListener("wheel", (e) => { if (!document.body.classList.contains("three") || !window.Film) return; const n = Date.now(); if (n - wheelAt < 900 || Math.abs(e.deltaY) < 12) return; wheelAt = n; e.deltaY > 0 ? window.Film.next() : window.Film.prev(); }, { passive: true });
+let ty = null; addEventListener("touchstart", (e) => (ty = e.touches[0].clientY), { passive: true });
+addEventListener("touchend", (e) => { if (ty == null || !document.body.classList.contains("three") || !window.Film) return; const dy = ty - e.changedTouches[0].clientY; ty = null; if (Math.abs(dy) > 50) dy > 0 ? window.Film.next() : window.Film.prev(); }, { passive: true });
+addEventListener("keydown", (e) => { if (!document.body.classList.contains("three") || !window.Film) return; if (["ArrowRight", "ArrowDown", "PageDown", " "].includes(e.key)) { e.preventDefault(); window.Film.next(); } if (["ArrowLeft", "ArrowUp", "PageUp"].includes(e.key)) { e.preventDefault(); window.Film.prev(); } });
+
+// ---------- Simple / 3D ----------
+function setView(v) {
+  document.body.classList.toggle("three", v === "3d");
+  $("vS").classList.toggle("on", v !== "3d"); $("v3").classList.toggle("on", v === "3d");
+  try { localStorage.setItem("jl:view", v); } catch {}
+  scrollTo(0, 0); current = -1;
+  if (v === "3d") start3d(); else window.Film?.pause();
+}
+$("vS").onclick = () => setView("simple"); $("v3").onclick = () => setView("3d");
+try { const v = new URLSearchParams(location.search).get("view") || localStorage.getItem("jl:view"); if (v === "3d") setView("3d"); } catch {}
+</script>
+</body>
+</html>

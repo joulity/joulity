@@ -1,12 +1,20 @@
 //! Joulity social savings on NEAR.
 //!
-//! Two products, both in one stablecoin (USDC on NEAR):
+//! Four products, all in one stablecoin (USDC on NEAR):
 //! - Group pocket: friends put money towards one goal; each member owns what they put in and can take it back.
 //! - Savings circle: every member pays a fixed amount each round; each round one member receives the whole pot,
 //!   in join order. The contract holds the money and enforces the order, so nobody has to trust the organiser.
+//! - Shared goal (`goal.rs`): one event, one objective; money in escrow, every exit is a vote
+//!   (75% to release to the organiser, majority to refund or let one member leave).
+//! - Reward circle (`reward.rs`): only the yield rotates, never the money; boosters take their yield early and
+//!   pay a premium that becomes the savers' bonus.
 //!
-//! Money comes in with `ft_transfer_call` on the USDC contract (msg = {"pocket": id} or {"circle": id}).
+//! Money comes in with `ft_transfer_call` on the USDC contract
+//! (msg = {"pocket": id}, {"circle": id}, {"reward": id}, or {"reward_yield": id} for yield sent in by the vault).
 //! Every payout is an `ft_transfer` with a callback that puts the balance back if the transfer fails.
+
+mod goal;
+mod reward;
 
 use near_sdk::json_types::U128;
 use near_sdk::store::LookupMap;
@@ -32,6 +40,8 @@ trait FungibleToken {
 enum Key {
     Pockets,
     Circles,
+    Rewards,
+    Goals,
 }
 
 #[near(serializers = [borsh, json])]
@@ -92,6 +102,10 @@ impl Circle {
 struct DepositMsg {
     pocket: Option<u64>,
     circle: Option<u64>,
+    reward: Option<u64>,
+    reward_yield: Option<u64>,
+    goal: Option<u64>,
+    goal_yield: Option<u64>,
 }
 
 #[near(contract_state)]
@@ -101,13 +115,15 @@ pub struct Contract {
     next_id: u64,
     pockets: LookupMap<u64, Pocket>,
     circles: LookupMap<u64, Circle>,
+    rewards: LookupMap<u64, reward::RewardCircle>,
+    goals: LookupMap<u64, goal::Goal>,
 }
 
 #[near]
 impl Contract {
     #[init]
     pub fn new(usdc: AccountId) -> Self {
-        Self { usdc, next_id: 1, pockets: LookupMap::new(Key::Pockets), circles: LookupMap::new(Key::Circles) }
+        Self { usdc, next_id: 1, pockets: LookupMap::new(Key::Pockets), circles: LookupMap::new(Key::Circles), rewards: LookupMap::new(Key::Rewards), goals: LookupMap::new(Key::Goals) }
     }
 
     // ---------- group pockets ----------
@@ -233,11 +249,21 @@ impl Contract {
     /// NEP-141 receiver. Returns the amount to refund.
     pub fn ft_on_transfer(&mut self, sender_id: AccountId, amount: U128, msg: String) -> PromiseOrValue<U128> {
         require!(env::predecessor_account_id() == self.usdc, "only USDC");
-        let m: DepositMsg = serde_json::from_str(&msg).unwrap_or_else(|_| env::panic_str("msg: {\"pocket\":id} or {\"circle\":id}"));
-        let refund = match (m.pocket, m.circle) {
-            (Some(id), None) => self.deposit_pocket(id, sender_id, amount.0),
-            (None, Some(id)) => self.deposit_circle(id, sender_id, amount.0),
-            _ => env::panic_str("msg: one of pocket or circle"),
+        let m: DepositMsg = serde_json::from_str(&msg).unwrap_or_else(|_| env::panic_str("msg: {\"pocket\":id}, {\"circle\":id}, {\"reward\":id}, {\"goal\":id} …"));
+        let n = [m.pocket, m.circle, m.reward, m.reward_yield, m.goal, m.goal_yield].iter().filter(|x| x.is_some()).count();
+        require!(n == 1, "msg: exactly one of pocket, circle, reward, reward_yield, goal, goal_yield");
+        let refund = if let Some(id) = m.pocket {
+            self.deposit_pocket(id, sender_id, amount.0)
+        } else if let Some(id) = m.circle {
+            self.deposit_circle(id, sender_id, amount.0)
+        } else if let Some(id) = m.reward {
+            self.deposit_reward(id, sender_id, amount.0)
+        } else if let Some(id) = m.reward_yield {
+            self.deposit_reward_yield(id, amount.0)
+        } else if let Some(id) = m.goal {
+            self.deposit_goal(id, sender_id, amount.0)
+        } else {
+            self.deposit_goal_yield(m.goal_yield.unwrap(), amount.0)
         };
         PromiseOrValue::Value(U128(refund))
     }

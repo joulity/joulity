@@ -1,0 +1,15 @@
+[package]
+name = "joulity-pendle"
+version = "0.1.0"
+edition = "2021"
+description = "Joulity vault strategy: USDC to Pendle PT on Ethereum, through NEAR Intents and NEAR Chain Signatures"
+license = "MIT"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+near-sdk = "5.5"
+
+[dev-dependencies]
+near-sdk = { version = "5.5", features = ["unit-testing"] }

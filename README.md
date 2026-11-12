@@ -33,6 +33,7 @@ A shared goal has rules set once, when it is created. Members join by invite lin
 
 | What | Link |
 |---|---|
+| Demo video (2:15, on X) | https://x.com/AzaiezH/status/2120969376367329509 |
 | Landing (2D and 3D story) | https://app.joulity.com |
 | The app (mobile first, works on desktop) | https://app.joulity.com/bank |
 | Admin pages (owner signs with his wallet) | https://app.joulity.com/dash |

@@ -210,7 +210,7 @@ function SendTo({ q, src, onBack }: { q: Quote; src: Source; onBack: () => void 
     <Screen bottom={40}>
       <Header title={`From ${src.chain}`} close />
       <Card style={{ gap: 12 }}>
-        <T s={13} w="m" c={C.sub}>Send exactly</T>
+        <T s={13} w="m" c={C.sub}>Send (exchange fees are fine: a bit less or more also works)</T>
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
           <T s={28} w="b">{q.amountIn} {src.token}</T>
           <Pressable onPress={() => COPY(q.amountIn, setCopiedAmt)} hitSlop={8}><T s={14} w="s" c={C.blue}>{copiedAmt ? 'Copied' : 'Copy'}</T></Pressable>

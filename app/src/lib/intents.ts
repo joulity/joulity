@@ -60,9 +60,9 @@ export async function quote(src: Source, amount: number, recipient: string, dry:
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      dry, swapType: 'EXACT_INPUT', slippageTolerance: slippageBps(src),
+      dry, swapType: dry ? 'EXACT_INPUT' : 'FLEX_INPUT', slippageTolerance: slippageBps(src),
       originAsset: src.asset, depositType: 'ORIGIN_CHAIN',
-      destinationAsset: TO, amount: toUnits(amount, src.decimals),
+      destinationAsset: TO, amount: toUnits(dry ? amount : amount * 0.85, src.decimals),
       refundTo: recipient, refundType: 'INTENTS',
       recipient, recipientType: 'DESTINATION_CHAIN',
       deadline: new Date(Date.now() + 24 * 3600e3).toISOString(),
@@ -74,7 +74,7 @@ export async function quote(src: Source, amount: number, recipient: string, dry:
   if (!r.ok || !j.quote) throw new Error(j.message || 'No quote right now. Try another amount.');
   const q = j.quote;
   return {
-    depositAddress: q.depositAddress ?? '', amountInRaw: q.amountIn, amountIn: q.amountInFormatted,
+    depositAddress: q.depositAddress ?? '', amountInRaw: q.amountIn, amountIn: dry ? q.amountInFormatted : String(amount),
     amountOut: Number(q.amountOutFormatted), minOut: Number(q.minAmountOut) / 1e6,
     seconds: q.timeEstimate ?? 60, expires: q.deadline ?? '',
   };

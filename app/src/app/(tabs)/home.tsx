@@ -9,6 +9,7 @@ import { useAuth } from '@/lib/auth';
 import { short } from '@/lib/near';
 import { circleDone, circleDue, friend, goalPot, monthlyEach, inPockets, liveGain, pocketTotal, RATE, useStore } from '@/lib/store';
 import { findMyPockets } from '@/lib/relay';
+import { goalFromChain } from '@/components/onchain';
 import { C, daysLeft, G, shadow, usd, usd0 } from '@/lib/theme';
 
 const ACTIONS: [string, any, string][] = [
@@ -35,7 +36,9 @@ export default function Home() {
       const old = s.pockets.find((q) => q.chainId === p.chainId);
       saveReal('pockets', { ...(old ?? { emoji: 'diamond', color: i, createdAt: Date.now() }), id: old?.id ?? `n${p.chainId}`, chainId: p.chainId, name: p.name, target: p.target, deadline: p.deadline,
         members: p.members.map((h) => ({ handle: h, put: h === me ? p.mine : (old?.members.find((x) => x.handle === h)?.put ?? 0) })) } as any);
-    }); }).catch(() => {});
+    });
+      list.goals.forEach(({ id, g }) => { const prev = s.goals.find((q) => q.chainId === id); saveReal('goals', goalFromChain(id, g, list.price, prev)); });
+    }).catch(() => {});
     return () => { off = true; };
   }, [real, s.user?.handle]);
   const gain = liveGain(s, now);

@@ -280,7 +280,10 @@ export function RealNewGoal() {
     try {
       const date = Math.floor((Date.now() + months * 30 * DAY) / 1000);
       const id = await createSocial(a.nearId, 'create_goal', { name: name.trim(), target: units(t), date }, a.sign);
-      const [g, price] = await Promise.all([getGoal(id), vaultPrice()]);
+      let g = await getGoal(id);
+      for (let i = 0; !g && i < 15; i++) { await new Promise(r => setTimeout(r, 1000)); g = await getGoal(id); }
+      if (!g) throw new Error('Goal created; NEAR is slow to show it. Open Home in a few seconds.');
+      const price = await vaultPrice();
       saveReal('goals', goalFromChain(id, g, price, { emoji, color: Date.now() % 7 } as Goal));
       router.replace(`/goal/n${id}`);
     } catch (e) { setErr((e as Error).message); }

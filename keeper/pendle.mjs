@@ -263,6 +263,13 @@ async function intentsResume(ctx, call, P, E) {
     ib.stage = "swap"; await sleep(2000);
   }
   if (ib.stage === "swap") {
+    const [haveN, haveE] = [await mt(A_NUSDC), await mt(A_BUSDC)];
+    if (haveN < amt && haveE * 100n >= amt * 97n) {
+      ib.out = (haveE < amt ? haveE : amt).toString(); ib.stage = "withdraw";
+      ctx.note(`Swap ${usd(amt)} USDC NEAR → Ethereum USDC already settled inside NEAR Intents`);
+    }
+  }
+  if (ib.stage === "swap") {
     const q = await relay("quote", { defuse_asset_identifier_in: A_NUSDC, defuse_asset_identifier_out: A_BUSDC, exact_amount_in: ib.amount, min_deadline_ms: 60000 }).catch(() => null);
     const best = (q?.result || []).sort((a, b) => (BigInt(b.amount_out) > BigInt(a.amount_out) ? 1 : -1))[0];
     if (!best) { ctx.note("NEAR Intents: no solver quote yet, retry next check"); return false; }
@@ -274,7 +281,8 @@ async function intentsResume(ctx, call, P, E) {
     if (!ih) { ctx.note("NEAR Intents: publish failed " + JSON.stringify(pub?.result || pub?.error || "").slice(0, 120)); return false; }
     let st = "";
     for (let i = 0; i < 30 && st !== "SETTLED" && st !== "NOT_FOUND_OR_NOT_VALID"; i++) { await sleep(2000); st = (await relay("get_status", { intent_hash: ih }).catch(() => null))?.result?.status || ""; }
-    const got = (await mt(A_BUSDC)) - before;
+    let got = (await mt(A_BUSDC)) - before;
+    for (let i = 0; st === "SETTLED" && got <= 0n && i < 6; i++) { await sleep(3000); got = (await mt(A_BUSDC)) - before; }   // final view lags
     if (st !== "SETTLED" || got <= 0n) { ctx.note(`NEAR Intents swap ${st || "unknown"}, retry`); return false; }
     ctx.note(`Swap ${usd(amt)} USDC NEAR → ${usd(got)} USDC Ethereum inside NEAR Intents (settled)`);
     ib.out = got.toString(); ib.stage = "withdraw";

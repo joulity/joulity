@@ -1,10 +1,33 @@
 # Joulity on NEAR
 
-**The on-chain neobank for saving together.**
+**The group pot, rebuilt on NEAR.**
 Personal or shared pockets in dollars (USDC). Money comes in from any chain. It earns on its own, in a vault that runs on NEAR.
 Login with email or Google: no seed phrase, no gas to pay.
 
-Built for the NEAR Hackathon (November 2026). Tracks: Social Money, Real-World Money, Unstoppable DeFi.
+Built at the NEAR Hackathon (November 2026). Tracks: Social Money, Real-World Money, Unstoppable DeFi.
+
+## Why
+
+People save together for one goal all over the world: stokvels in South Africa, family funds in Saudi Arabia, vaquitas in Mexico, cagnottes in France. Everywhere it has the same three problems:
+
+| Today | With Joulity |
+|---|---|
+| One person holds the cash | The money sits in escrow on NEAR. Nobody can withdraw alone |
+| It earns nothing | Savings are held as jUSD in the Joulity vault and earn while they wait |
+| It can't cross borders (bank fees, IBANs, 3-5 day transfers) | Deposit from any chain and any country with NEAR Intents, in about a minute |
+
+## The group rules
+
+A shared goal has rules set once, when it is created. Members join by invite link on those rules, and the contract `joulity-social.near` enforces them:
+
+| Rule | What the code does |
+|---|---|
+| Goal | A target amount and a date |
+| Money | Held by the contract, never by a member |
+| Release | Paid out only when members holding 75% of the money vote yes |
+| Leaving | One member leaving needs more than 50% of the money |
+| Plans change | A refund vote, or 30 days past the date with no release: everyone takes back their part plus its yield |
+| While it waits | The pot holds jUSD, so it earns the vault yield |
 
 ## Live
 

@@ -128,6 +128,22 @@ async function waitJusd(me: string, above: bigint) {
   throw new Error('The vault is slow. Your money is safe; try again in a minute.');
 }
 
+/** After a new sign-in: find this account's pockets on chain (pockets, goals and circles share one id counter). */
+export async function findMyPockets(me: string) {
+  const [info, out] = [await viewJson(VAULT, 'info', {}), [] as { chainId: number; name: string; target: number; deadline: number; mine: number; members: string[] }[]];
+  const price = Number(info.price) / 1e6;
+  for (let id = 1, miss = 0; miss < 8 && id < 500; id++) {
+    const [p, g, c] = await Promise.all([viewJson(SOCIAL, 'get_pocket', { id }).catch(() => null), viewJson(SOCIAL, 'get_goal', { id }).catch(() => null), viewJson(SOCIAL, 'get_circle', { id }).catch(() => null)]);
+    if (!p && !g && !c) { miss++; continue; } miss = 0;
+    if (!p) continue;
+    const members = (p.members ?? []) as { account: string; balance: string }[];
+    const m = members.find((x) => x.account === me);
+    if (!m && p.creator !== me) continue;
+    out.push({ chainId: id, name: p.name, target: Number(p.target) / 1e6, deadline: Number(p.deadline) * 1000, mine: (Number(m?.balance ?? 0) / 1e6) * price, members: members.map((x) => x.account) });
+  }
+  return out;
+}
+
 /** New pocket on chain. Returns the pocket number. */
 export async function newPocket(me: string, name: string, targetUsd: number, deadlineMs: number, sign: Signer) {
   const r = await social(me, 'create_pocket', { name, target: units(targetUsd), deadline: Math.floor(deadlineMs / 1000) }, sign);

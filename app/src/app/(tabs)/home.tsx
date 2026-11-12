@@ -8,6 +8,7 @@ import { TxRow } from '@/components/tx';
 import { useAuth } from '@/lib/auth';
 import { short } from '@/lib/near';
 import { circleDone, circleDue, friend, goalPot, monthlyEach, inPockets, liveGain, pocketTotal, RATE, useStore } from '@/lib/store';
+import { findMyPockets } from '@/lib/relay';
 import { C, daysLeft, G, shadow, usd, usd0 } from '@/lib/theme';
 
 const ACTIONS: [string, any, string][] = [
@@ -26,6 +27,17 @@ export default function Home() {
 
   const a = useAuth();
   const real = !!s.user?.real;
+  // real account: after a new sign-in the phone has no list yet; bring back the pockets from the chain
+  const { saveReal } = useStore();
+  useEffect(() => {
+    if (!real || !s.user?.handle) return; const me = s.user.handle; let off = false;
+    findMyPockets(me).then((list) => { if (off) return; list.forEach((p, i) => {
+      const old = s.pockets.find((q) => q.chainId === p.chainId);
+      saveReal('pockets', { ...(old ?? { emoji: 'diamond', color: i, createdAt: Date.now() }), id: old?.id ?? `n${p.chainId}`, chainId: p.chainId, name: p.name, target: p.target, deadline: p.deadline,
+        members: p.members.map((h) => ({ handle: h, put: h === me ? p.mine : (old?.members.find((x) => x.handle === h)?.put ?? 0) })) } as any);
+    }); }).catch(() => {});
+    return () => { off = true; };
+  }, [real, s.user?.handle]);
   const gain = liveGain(s, now);
   const pockets = inPockets(s);
   // real account: the balance is the USDC the chain holds for this NEAR account
